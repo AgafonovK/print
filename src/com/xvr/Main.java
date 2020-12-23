@@ -10,6 +10,11 @@ public class Main {
         dispatcherThread.start();
 
         while (dispatcherThread.isAlive()) {
+            try {
+                Thread.sleep(5000);
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
         }
         System.out.println("Bye bye");
         System.exit(0);

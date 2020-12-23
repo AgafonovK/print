@@ -18,7 +18,7 @@ public class DocumentProducerThread implements Runnable{
                 Document document = new Document();
                 dispatcher.addDocumentToPrint(document);
                 dispatcher.getQueue().forEach(document1 -> System.out.println(document1.hashCode()));
-                Thread.sleep(2000);
+                Thread.sleep(500);
                 if (i==6) {
                     System.out.println("Поток добавления документов засыпает на 10 сек, для проерки ожидания");
                     Thread.sleep(1000);

@@ -18,7 +18,7 @@ public class PrintDocumentConsumerThread implements Runnable {
                 while (dispatcher.getQueue().size() > 0) {
                     if ((doc = dispatcher.getQueue().poll()) != null) {
                         System.out.println("ВЫПОЛНЯЮ ПЕЧАТЬ ДОКУМЕНТА: " + doc.hashCode());
-                        //Thread.sleep(1500);
+                        Thread.sleep(1500);
                     }
                 }
 
