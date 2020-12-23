@@ -2,30 +2,38 @@ package com.xvr;
 
 import com.xvr.document.Document;
 
-public class DocumentProducerThread implements Runnable{
+import java.util.Queue;
 
-    private final Dispatcher dispatcher;
+public class DocumentProducerThread implements Runnable {
 
-    public DocumentProducerThread (Dispatcher dispatcher){
-        this.dispatcher = dispatcher;
+    private final Queue queue;
+
+    public DocumentProducerThread(Queue queue) {
+        this.queue = queue;
     }
 
     @Override
     public void run() {
         System.out.println("Добавляем документ в очередь: ");
-        try{
-            for (int i = 0; i<30; i++){
+
+            for (int i = 0; i < 30; i++) {
+                try {
                 Document document = new Document();
-                dispatcher.addDocumentToPrint(document);
-                dispatcher.getQueue().forEach(document1 -> System.out.println(document1.hashCode()));
-                Thread.sleep(500);
-                if (i==6) {
-                    System.out.println("Поток добавления документов засыпает на 10 сек, для проерки ожидания");
+                synchronized (queue) {
+                    queue.add(document);
+                    System.out.println("документ " + document.hashCode() + " добавлен в очередь ");
+                    //Thread.sleep(500);
+                    queue.notify();
+                    queue.wait();
+                }
+                if (i == 6) {
+                    System.out.println("Поток добавления документов засыпает на 1 сек, для проерки ожидания");
                     Thread.sleep(1000);
                 }
-            }
-        }catch (InterruptedException e){
+
+
+        } catch (InterruptedException e) {
             System.out.println("Поток добавления документа прерван ");
-        }
+        }}
     }
 }

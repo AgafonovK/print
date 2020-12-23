@@ -24,12 +24,13 @@ public class Dispatcher implements Runnable {
         try {
             //init();
 
-            printConsumerThread = new Thread(new PrintDocumentConsumerThread(this));
+            printConsumerThread = new Thread(new PrintDocumentConsumerThread(this.queue));
             printConsumerThread.setName("PrintDocumentThread");
             System.out.println("Стартуем поток печати " + printConsumerThread.getName());
             printConsumerThread.start();
 
-            documentProducerThread = new Thread(new DocumentProducerThread(this));
+            Thread.sleep(5000);
+            documentProducerThread = new Thread(new DocumentProducerThread(queue));
             documentProducerThread.setName("documentProducerThread");
             System.out.println("Стартуем поток добавления документа " + documentProducerThread.getName());
             documentProducerThread.start();
@@ -62,20 +63,15 @@ public class Dispatcher implements Runnable {
     }
 
     //TODO IT'S Lock with Thread Add document
-    public synchronized Queue<Document> getQueue() throws InterruptedException {
+    public Queue<Document> getQueue() {
         while (queue.size() == 0) {
             System.out.println("сколько напечатано " + counterSizeQueue);
-            wait();
         }
         return queue;
 
     }
 
-    public synchronized void setQueue(Queue setQueue) {
-        this.queue = setQueue;
-    }
-
-    public synchronized void addDocumentToPrint(Document document) throws InterruptedException {
+    public void addDocumentToPrint(Document document) throws InterruptedException {
         queue.add(document);
         System.out.println("документ " + document.hashCode() + " добавлен в очередь ");
         counterSizeQueue += 1;
@@ -83,7 +79,7 @@ public class Dispatcher implements Runnable {
         if (counterSizeQueue == 25) {
             stopDispatcher();
         }
-        notify();
+        notifyAll();
     }
 
     // interrupt thread Print and clear queue and list unprint document
@@ -108,6 +104,10 @@ public class Dispatcher implements Runnable {
         System.out.println("тормозит диспетчер");
 
         Thread.sleep(3000);
+    }
+
+    public void setQueue(Queue setQueue) {
+        this.queue = setQueue;
     }
 
     //TODO this method need todo
